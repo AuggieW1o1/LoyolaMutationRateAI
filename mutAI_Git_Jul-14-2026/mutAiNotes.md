@@ -1,0 +1,115 @@
+
+
+
+Notes about ai to predict mutation size:
+
+
+
+
+
+
+
+
+
+Sometimes loss calculation gets stuck at -4.4414 and data plot shows a horizontal line by my observations this happends around 2% of attempts training the ai and im unsure why. Ive decided to call this outcome a "414 error." I wish to discover the cause of this error at some point, but with no idea whats causing it, and with AI being a black box, it seems not worth the time to fix
+
+By obervation it seems the loss value aproaches a horizontal asymtote at around Loss=0.45. While this limit seems to always be present, its worth noting there has been no real attempt to push past limit, so it may be that you can go past, and that it simply requiers far more training time. Its possible it could be that the 0.45 limit is caused by a diffrent version of the 414 error, however due to uncertenty around the cause of both the 414 error and the 0.45 limit, im currently unable to draw conclusions about possible connections between the two
+
+
+
+The data im working with has been collected by the paper: 
+
+https://pmc.ncbi.nlm.nih.gov/articles/PMC2937809/
+
+In addition, it was planned to use data from:
+
+https://pmc.ncbi.nlm.nih.gov/articles/PMC5075021/
+
+at one point, however its data was largley the same the first paper, only with less spesificity, so all data came from the first source that has been used in this project as of step one, with step one being analysing mutation rate and how it compares to the virus genome size in kb. That said, I did use the second paper as a recource to compare my results with. Additonally, all data has been stoerd in a desmos graph:
+
+https://www.desmos.com/calculator/duwyknznbo
+
+because when first getting the data, I wanted to mess around and view it in diffrent ways, to see if it would reveal a stronger corolation. This, in fact, workerd, as it showed that the corolation is more pronounced when taking the natural log of both the mutation rate and genome size.
+
+
+
+This is one of the two reasons the model has been trained with the inputs having their natural log taken. The other is that otherwise, due to the mutation rates being so close to zero, the ai would find that the best way to minimize the diffrence between its predicted guess and the actuall result would be to always guess the mutation rate is zero. I know the AI would do this, because it happend in a past version before it was later fixed.
+
+
+
+An unimportant note relating to the afore mentioned point about genome size being stoerd in KB is that when startnig this project, due to having a far larger background in computer science compared to biology, I falsly assumed kb ment killobytes, and became confused on how there exists a virus in this data set whose genome size takes up over four times the storage space as the origonal super mario bros for the NES. I now of course know that kb stands for hit rapper KB, who can know be said to be about 10% the size of Hepatitis C. (But yes, 1 KB is 1,000 bases pairs)
+
+
+
+
+
+
+
+
+
+
+
+
+
+NOW AFTER MAKING mainAI_DataSet1_Sequence:
+
+
+
+
+
+
+
+
+
+
+
+
+When reviewing data, the mutation rate for TMV (tobacco mosaic virus) was far lower than everying else with simular geome size and nucleotides. This led me to look into how the papers above got their data. The data was cited to be from the 2002 paper titled "The Rate ahd Character of Spontaneous Mutation in an RNA Virus." The issue is this data was found to be and incorecttly used in the compolation of data from the paper "mechanisms of viral mutation" (which will be abbreviated as MVM) which is where all of our data has come from so far. The soruce paper from 2002 notes the average rate of mutation for TMV to be between (7.26-10.3)E-6. They also give a simular range from (6.8-9.9)E-6 using a simpler formula. The mutation rate that MVM says is from the 2002 paper is that of 8.7E-6, which is never mentioned as the mutation rate anywhere is the 2002 paper that MVM is claiming to have gotten this data from. The closest time the 2002 paper gets to a mutation rate 8.7E-6 is the first range, for which the average value of the range is 8.78E-6, however this should round to 8.8E-6, not 8.7E-6. Additonally, MVM has been shown to round correctly other times, such as when they correctly rounded 2.96E-5 to 3E-5 when citing the paper "Upper-limit mutation rate estimation for a plant RNA virus" for the mutation rate of tobacco etch virus. Doing more looking, the paper titled "Viral Mutation Rates" (VMR) claimed two possible values for the mutation rate of TMV, being 1.2E-5 and 8.7E-6. It is possible that this is where the 8.7E-6 claim from MVM came from, however, while VMR is cited by MVM, it is for an unrelated part of the paper, and VMR is not cited for its mutation value of TMV. This leads to two possiblities, being either that MVM lacks quality for data collection, as they round both inconsistently and incoreectly, or they failed to properly cite VMR for their mutation rate. 
+While this issue is not important to the grand scheme of things, I thought it notable enough to write about.
+
+
+
+
+
+The 414 error has return with this new version, however now it gets stuck around -4.7695, so this new error will be called the 476 error. This 476 error also has been happening at a far higher frequency than the 414 erro, happening around 5-10% of the times training the AI. Other than the diffrent value and rate of occurance, its the same as the 414 error, just with the new AI model instead of the old one. 
+
+
+
+
+
+Ive now taken outputted data from running the AI with new inputs and compiled it here:
+
+https://www.desmos.com/calculator/ilv4mnnuib
+
+This graph looks at the average error amoung viruses. put simply, my idea is that if one virus consistantly has a high error rate, and another viruses has a consistantly low rate of error, and there is some trait that is high in the virst virus and low in the seccond, that might be influencing the rate of mutation, as it could be the factor that is causing the error. Extend this to all 18 viruses my model is testing on, and then if there is any traits that match the error rate of the viruses, it has a chance to be influencing the mutation rate for all viruses. This idea, while it may work, will take a while. Good thing I have a lot of spare time. Of course, this idea depends on the error for each virus being consistant with every output of the AI, so that is what is being tested at the link above. When making this AI version, I added the ability to stop training once the AI has reached a certin level of loss. The idea was that this would improve consistancy between tests, but more importantly, it would prevent over training of the AI where it would fine tune the formula for the spesific training data rather than looking at larger trends like intended. When analysing the data, we seperated it into three groups. One group was the set of data gotten with a loss cutoff of one, another group was the set of data gotten without a loss cutoff, and the final group was the set of all data (the other two groups combined). We analised the average error for each group, and the consistancy for each group. Average error is self explainatory, but I feel it nessacary to explain consistancy. For each virus, the error from all of the data points belonging to that virus were averaged to find that viruses average error value. Then, for each virus, we took the average distance each point is from that viruses average error and than averaged that value for each virus in the training data to find the average distance each data point is from its viruses average error. A low value means that all data points for each virus tend to have simular errors, meaning the AI is consistant. A high value means that the AI is giving drasticly diffrent error values for the same virus each time it was trained. Naturally, a low error value is ideal, as it means there is a pattern worth looking into. Looking at the data for each group, we found:
+
+The combined group had the best average error at -0.0038
+The no loss cutoff group had the next best average error at 0.41
+The loss cutoff group had the worst average error at -0.418
+
+As you may have noticed, the loss cutoff group and the no loss cutoff group were almsot exactly eachothers additive inverse. This is pure coincidence. As shown by the average error, the no loss cutoff group had an average error far above 0, meaning the predictions of the AI were almost always overestimates rather than being correct or an underestimate. Now, its important to note that we only ran five simulations with a loss cutoff and five without. This is a small trial size, but it does give nearly 200 data points, which I felt was enough to get a rough estimate for the trends. The main issue with this smaller sample size is the potential for one outlier data set to drasticly skew the results. This is what happend in the no loss cutoff group. Data sets from the 10th run of the AI were heavily skewed, as they differd greatly from the other data points collected. To numericly messure how much they diffrer, we took the average of all data points (including the theorized outlier) withing the no loss cutoff group, and then from each AI trial (which shall just be referd to as a trial from now on) we found the total distance each error value is from the average error value of its respective virus, before averaging these values together for each viruses error within a trial to quanifty how much, on average, each trial's error rate differs for the average error rate. The seccond highest trial withing the no loss cutoff groups had an average distance from average of about 0.247. The trial with the highest average distance from average was trial 10 with over double the average distance, having a average distance from the average of 0.551. This means that trial 10 is indeed an outlier, as its data has drsticlly differing error values from the other data of the no loss cutoff trial. The diffrence gets even more extreeme when you remeber we are including trial 10 within the average for the no loss cutoff group, which is moving the average away from the other trials and twords trial 10. When removing trial 10 from the average, we fnid its average distance from the average is about three and a half times as large as the next highest average distance from the average. Why does this matter for the average error? Because the no loss cutoff group tended to have a high error value in the positives, but trial 10 had drasticly lower error values, often in the negitives. This brought down the average error a lot, such that without the supposed outlier data, the no loss cutoff group would have a worse average error than the loss cutoff group. 
+
+As for the average consistancy, we found:
+
+The loss cutoff group had the best consistancy at about 0.085
+The no loss cutoff gorup had the next best consistancy at about 0.279
+The combined group had the worst average consistancy at about 0.47
+
+Notably, this result includes the outlier data, but the placement would not change if its removed. Each of the data sets were then scored, by averging thier consistancy and average error, from which it was found that the loss cutoff group performed the best, with the no loss cutoff group performing the worst. This result plays out the same regardless of if you include the outlier trial. This confirms to me that it is best to continue with using the loss cutoff when training the AI. eventually, I would wish to perform the same anaylsis with more data and more values of a loss cutoff rather than just a cutoff of 1 or none at all, however that would be very time intensive, so it will not happen in the near future, and likely not at all. While this data analysis did confirm that we should continue with a loss cutoff, it had the other goal of attempting to find patterns within the error rate. When finding patterns, I will only be looking at the cutoff group, because it follows a simular pattern to the larger group, shows the pattern with more clarity, and is what will be used always going forword with this project. Looking at the data, there is a VERY clear trend with the average error, so the next step of the project will be to find factors that fit this error trend. This ends the summary of this data analysis.
+
+
+
+
+
+
+Attempting to find data to fit the error rate. I will list traits of the viruses I have checked and cross them out marking if they fit the error rate or not. This listing will be done below.
+
+Virus Age [FAIL]
+Virus Diameter [FAIL]
+Infectious rate [UNKNOWN*]
+Mortality Rate Upon Infection [FAIL]
+Virus Half-life [INCONLUSIVE**]
+
+*Could not find enough data on this factor to come to a conclusion, or see any possible trend
+
+**While a rough pattern was found within the half life data found when compared to the average error of each virus, there is no standerdized mesurement of half life for the virus. Some have thier half life mesured when airborne, other when in water, others under UV light, and others under high tempatures. Additonally, the pattern is not perfect, however it does roughly exist if you squint. If conclusions were to be drawn from the conection of error rate with virus half life, standerdized data would need to be obtained. 
