@@ -1,0 +1,4 @@
+def rtn():
+    return 1,2,3
+
+print(rtn()[0])
